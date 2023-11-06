@@ -1,0 +1,42 @@
+{% load static %}
+
+<style>
+   .hello-msg{
+     font-size: 18px;
+     color: #fff;
+     margin-right:20px;
+   }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <img src = "{% static 'images/cutecat.jpeg'%}" style="width: 5vw; min-width: 5px;">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        {% if request.user.is_staff %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'home' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'products' %}">Products</a>
+       </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account' %}">Settings</a>
+       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'canteen1' %}">Canteen 1</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'canteen2' %}">Canteen 2</a>
+      </li>
+
+        {% endif %}
+      </ul>
+    </div>
+
+    <span class="hello-msg">Hello, {{request.user}} </span>
+    <span class="hello-msg"><a href="{% url 'logout' %}">Logout</a></span>
+  </nav>
