@@ -7,20 +7,16 @@
         <div class="card card-body">
             <table class="table table-sm">
                 <tr>
-                    <th>Product</th>
-                    <th>Category</th>
-                    <th>Date Orderd</th>
-                    <th>Status</th>
-
+                    <th>Order Number</th>
+                    <th>Order Status</th>
+                    <th>Order Created on</th>
                 </tr>
 
                 {% for order in orders %}
                 <tr>
-                    <td>{{order.product}}</td>
-                    <td>{{order.product.category}}</td>
-                    <td>{{order.date_created}}</td>
+                    <td>{{order.id}}</td>
                     <td>{{order.status}}</td>
-                   
+                    <td>{{order.date_created}}</td>  
                 </tr>
                 {% endfor %}
 

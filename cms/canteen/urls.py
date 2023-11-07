@@ -15,8 +15,11 @@ urlpatterns = [
     path('create_order/<str:pk>/',views.createOrder,name="create_order"),
     path('update_order/<str:pk>/',views.updateOrder,name="update_order"),
     path('delete_order/<str:pk>/',views.deleteOrder,name="delete_order"),
-    path('canteen1/',views.canteen1,name="canteen1"),
-    path('canteen2/',views.canteen2,name="canteen2"),
+    path('store/',views.store,name="store"),
+    path('cart/',views.cart,name="cart"),
+    path('checkout/',views.checkout,name="checkout"),
+    path('process_order/',views.processOrder,name="process_order"),
+    path('update_item/',views.updateItem,name="update_item"),
     
 
     #path('reset_password/',auth_views.PasswordResetView.as_view(),name="reset_password"),
