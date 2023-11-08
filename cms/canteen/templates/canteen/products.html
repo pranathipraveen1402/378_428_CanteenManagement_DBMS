@@ -12,15 +12,33 @@
 				<div class="card card-body">
 					<table class="table">
 						<tr>
+							<th></th>
 							<th>Product</th>
 							<th>Category</th>
 							<th>Price</th>
+							<th>Inventory</th>
+							<th>Update</th> <!-- Add a new table header for the action -->
+	
 						</tr>
 						{% for i in products %}
 							<tr>
+								<td>
+									<img src="{{ i.image.url }}" alt="{{ i.name }}" width="100" height="100">
+								</td>
 							<td>{{i.name}}</td>
 							<td>{{i.category}}</td>
 							<td>{{i.price}}</td>
+							<td>{{i.inventory}}</td>
+							<td>
+                                <form method="post" action="{% url 'adjust_inventory' i.id %}">
+                                    {% csrf_token %}
+                                    {% comment %} <label for="new_inventory_{{ i.id }}">New Inventory:</label> 
+                                    <input type="number" name="new_inventory" id="new_inventory_{{ i.id }}">{% endcomment %}
+                                    <button type="submit" class="btn btn-success" name="new_inventory" id="new_inventory_{{ i.id }}">Update Inventory</button>
+
+                                </form>
+                            </td>
+
 							</tr>
 						{% endfor %}
 					</table>

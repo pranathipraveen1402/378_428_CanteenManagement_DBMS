@@ -1,0 +1,9 @@
+{% extends 'canteen/main.html' %}
+{% block content %}
+<h2>Products in Category: {{ category_name }}</h2>
+<ul>
+    {% for product in products %}
+        <li>{{ product.1 }} - Rs {{product.2}} , {{product.3}}</li> 
+    {% endfor %}
+</ul>
+{% endblock %}

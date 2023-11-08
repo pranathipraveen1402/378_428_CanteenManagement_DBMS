@@ -34,6 +34,7 @@ class Product(models.Model):
     description = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(auto_now_add = True)
     tags = models.ManyToManyField(Tag)
+    inventory = models.PositiveIntegerField(default=50)
     image = models.ImageField(default = "cutecat.jpeg",null=True, blank=True)
 
     def __str__(self):
@@ -77,7 +78,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product = models.ForeignKey(Product,null=True, on_delete=models.SET_NULL)
     order = models.ForeignKey(Order,null=True, on_delete=models.SET_NULL) 
-    quantity = models.IntegerField(default=0,null=True,blank=True)
+    quantity = models.PositiveIntegerField(default=0,null=True,blank=True)
     date_added = models.DateTimeField(auto_now_add = True) 
 
     @property

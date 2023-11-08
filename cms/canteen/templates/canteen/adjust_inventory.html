@@ -1,0 +1,25 @@
+{% extends 'canteen/main.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Adjust Inventory</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="new_inventory">New Inventory:</label>
+                                <input type="number" class="form-control" name="new_inventory" id="new_inventory" value="{{ product.inventory }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Inventory</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

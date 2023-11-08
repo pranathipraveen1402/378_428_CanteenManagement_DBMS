@@ -117,20 +117,60 @@ def customer(request,pk):
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def createOrder(request,pk):
-    OrderFormSet = inlineformset_factory(Customer,Order, fields=('product','status'),extra=10)
-    customer = Customer.objects.get(id=pk)
-    formset = OrderFormSet(queryset = Order.objects.none(), instance = customer)
-    #form = OrderForm(initial={'customer':customer})
+def adjustInventory(request, pk):
+    product = Product.objects.get(id=pk)
+
     if request.method == 'POST':
+        new_inventory = request.POST['new_inventory']
+        try:
+            new_inventory = int(new_inventory)
+        except ValueError:
+            messages.error(
+                request, 'Invalid inventory value. Please enter a valid number.')
+            return redirect('adjust_inventory', pk=pk)
+
+        if new_inventory < 0:
+            messages.error(request, 'Inventory cannot be negative.')
+        else:
+            product.inventory = new_inventory
+            product.save()
+            messages.success(request, 'Inventory updated successfully.')
+            return redirect('products')
+
+    return render(request, 'canteen/adjust_inventory.html', {'product': product})
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def createOrder(request,pk):
+    customer = Customer.objects.get(id=pk)
+    form = OrderForm()
+    if request.method == 'POST':
+        print('Printing post request:',request.POST)
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            product = Product.objects.get(id=pk)
+            order_item = OrderItem.objects.get(id=pk)
+            if product.inventory > 0:
+                order = form.save()
+                product.inventory-=1
+                messages.success(request, 'Order was created successfully')
+                return redirect('/')
+            else:
+                messages.error(request, 'Product is out of stock')
+                return redirect('create_order', pk=pk)          
+    #OrderFormSet = inlineformset_factory(Customer,Order, fields=('product','status'),extra=10)
+    #customer = Customer.objects.get(id=pk)
+    #formset = OrderFormSet(queryset = Order.objects.none(), instance = customer)
+    #form = OrderForm(initial={'customer':customer})
+    #if request.method == 'POST':
         #print('Printing post: ',request.POST)
         #form = OrderForm(request.POST)
-        formset = OrderFormSet(request.POST,instance = customer)
-        if formset.is_valid():
-            formset.save()
-            return redirect("/")
+        #formset = OrderFormSet(request.POST,instance = customer)
+        #if formset.is_valid():
+            #formset.save()
+            #
     
-    context = {'formset':formset}
+    context = {'form':form, 'customer': customer}
     return render(request,'canteen/order_form.html',context)
 
 
@@ -244,7 +284,22 @@ def processOrder(request):
         print("User Not logged in")
     
     if total == order.get_cart_total:
-        order.status = 'Order Accepted'
+        order.status = 'Pending'
         order.complete = True
     order.save()
     return JsonResponse('Payment Complete',safe=False)
+
+from django.db import connection
+from django.shortcuts import render
+def adminstats(request, category_name):
+    with connection.cursor() as cursor:
+        cursor.callproc('GetProductsByCategory', [category_name])
+        results = cursor.fetchall()
+        #print(results)
+
+    context = {
+    'products': results,
+    'category_name': category_name,
+}
+
+    return render(request, 'canteen/stats.html', context)
