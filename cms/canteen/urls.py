@@ -20,8 +20,10 @@ urlpatterns = [
     path('checkout/',views.checkout,name="checkout"),
     path('process_order/',views.processOrder,name="process_order"),
     path('update_item/',views.updateItem,name="update_item"),
-    path('stats/<str:category_name>/', views.adminstats, name="stats"),
+    path('store/stats/<str:category_name>/', views.adminstats, name="stats"),
     path('adjust_inventory/<str:pk>/', views.adjustInventory, name="adjust_inventory"),
+    path('sales/<str:order_date>/', views.product_sales_per_day, name='product_sales_per_day'),
+
 
 
     

@@ -1,9 +1,20 @@
 {% extends 'canteen/main.html' %}
 {% block content %}
-<h2>Products in Category: {{ category_name }}</h2>
-<ul>
-    {% for product in products %}
-        <li>{{ product.1 }} - Rs {{product.2}} , {{product.3}}</li> 
-    {% endfor %}
-</ul>
+<div class="container">
+    <h2 class="mt-4">Products in Category: {{ category_name }}</h2>
+    <ul class="list-group mt-3">
+        {% for product in products %}
+            <li class="list-group-item">
+                {{ product.1 }} - <strong>Rs {{ product.2 }}</strong>, {{ product.3 }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+<style>
+    /* Custom CSS styles */
+    .list-group-item {
+        margin-top: 10px;
+    }
+</style>
 {% endblock %}
+

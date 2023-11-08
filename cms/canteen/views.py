@@ -295,11 +295,59 @@ def adminstats(request, category_name):
     with connection.cursor() as cursor:
         cursor.callproc('GetProductsByCategory', [category_name])
         results = cursor.fetchall()
-        #print(results)
+
+    categories = Product.objects.values_list('category', flat=True).distinct()
+    print("Categories:", categories)  # Add this line for debugging
 
     context = {
-    'products': results,
-    'category_name': category_name,
-}
+        'products': results,
+        'category_name': category_name,
+        'categories': categories,
+    }
 
     return render(request, 'canteen/stats.html', context)
+
+from django.db import connection
+from django.shortcuts import render
+
+def product_sales_per_day(request, order_date):
+    with connection.cursor() as cursor:
+        cursor.callproc('GetProductSalesPerDay', [order_date])
+        results = cursor.fetchall()
+
+    context = {
+        'sales_data': results,
+        'order_date': order_date,
+    }
+
+    return render(request, 'canteen/sales.html', context)
+
+
+from django.db import connection
+from django.shortcuts import render
+
+from django.db import connection
+from django.shortcuts import render
+
+def total_quantity_ordered(request, order_date):
+    # Construct the SQL statement to call the function with the parameter
+    sql = "SELECT GetTotalQuantityOrderedPerProduct(%s)"
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql, [order_date])
+        result = cursor.fetchone()
+        
+        if result:
+            total_quantity = result[0]
+        else:
+            total_quantity = None
+
+    context = {
+        'total_quantity': total_quantity,
+        'order_date': order_date,
+    }
+
+    return render(request, 'canteen/sales.html', context)
+
+
+
