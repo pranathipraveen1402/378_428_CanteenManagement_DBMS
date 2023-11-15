@@ -22,7 +22,9 @@ urlpatterns = [
     path('update_item/',views.updateItem,name="update_item"),
     path('store/stats/<str:category_name>/', views.adminstats, name="stats"),
     path('adjust_inventory/<str:pk>/', views.adjustInventory, name="adjust_inventory"),
-    path('sales/<str:order_date>/', views.product_sales_per_day, name='product_sales_per_day'),
+    path('sales/<str:order_date>/', views.statistics, name='statistics'),
+    path('overall_sales/',views.overall_sales,name="overall_sales"),
+    path('trial/',views.trial,name="trial")
 
 
 

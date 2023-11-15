@@ -310,7 +310,7 @@ def adminstats(request, category_name):
 from django.db import connection
 from django.shortcuts import render
 
-def product_sales_per_day(request, order_date):
+""" def product_sales_per_day(request, order_date):
     with connection.cursor() as cursor:
         cursor.callproc('GetProductSalesPerDay', [order_date])
         results = cursor.fetchall()
@@ -323,31 +323,88 @@ def product_sales_per_day(request, order_date):
     return render(request, 'canteen/sales.html', context)
 
 
-from django.db import connection
-from django.shortcuts import render
+def product_qty_sales(request,order_date):
+    cursor = connection.cursor()
+    query = "select GetTotalQuantityOrderedPerProduct(%s)"
+    cursor.execute(query, [order_date])
+    res = cursor.fetchone()
+    print(res)
+    print(connection.queries)
+    return render(request,'canteen/trial.html' ,{'result': res})
 
-from django.db import connection
-from django.shortcuts import render
+ """
 
-def total_quantity_ordered(request, order_date):
-    # Construct the SQL statement to call the function with the parameter
-    sql = "SELECT GetTotalQuantityOrderedPerProduct(%s)"
+def statistics(request, order_date):
+    # Cursor 1: Get product sales per day
+    with connection.cursor() as cursor1:
+        cursor1.callproc('GetProductSalesPerDay', [order_date])
+        sales_results = cursor1.fetchall()
+
+    # Cursor 2: Get total quantity ordered per product
+    with connection.cursor() as cursor2:
+        query = "SELECT GetTotalQuantityOrderedPerProduct(%s)"
+        cursor2.execute(query, [order_date])
+        qty_result = cursor2.fetchone()
     
-    with connection.cursor() as cursor:
-        cursor.execute(sql, [order_date])
-        result = cursor.fetchone()
-        
-        if result:
-            total_quantity = result[0]
-        else:
-            total_quantity = None
-
     context = {
-        'total_quantity': total_quantity,
+        'sales_data': sales_results,
+        'qty_data': qty_result,
         'order_date': order_date,
     }
 
     return render(request, 'canteen/sales.html', context)
 
+
+def overall_sales(request):
+    with connection.cursor() as cursor3:
+        query_category_sales = """
+        SELECT p.category, SUM(oi.quantity * p.price) AS total_sales
+        FROM canteen_product p
+        LEFT JOIN canteen_orderitem oi ON p.id = oi.product_id
+        GROUP BY p.category;
+        """
+        cursor3.execute(query_category_sales)
+        category_sales_result = cursor3.fetchall()
+
+    with connection.cursor() as cursor4:
+        query = """
+        SELECT o.id, c.name, o.status
+        FROM canteen_order o
+        INNER JOIN canteen_customer c ON o.customer_id = c.id;
+        """
+        cursor4.execute(query)
+        order_data = cursor4.fetchall()
+
+    with connection.cursor() as cursor5:
+        query = """
+        select (select name from canteen_customer where id = o.customer_id) as customer_name,o.id as order_id,
+        (select SUM(oi.quantity * p.price) from canteen_orderitem oi 
+        join canteen_product p ON oi.product_id = p.id where oi.order_id = o.id) as cost
+        from canteen_order o
+        order by cost desc;
+        """
+        cursor5.execute(query)
+        customer_data = cursor5.fetchall()
+
+
+    context = {'order_data': order_data,'category_sales_data': category_sales_result,'customer_data': customer_data,}
+
+    return render(request, 'canteen/overall_sales.html', context)
+
+def trial(request):
+    with connection.cursor() as cursor5:
+        query = """
+        select (select name from canteen_customer where id = o.customer_id) as customer_name,o.id as order_id,
+        (select SUM(oi.quantity * p.price) from canteen_orderitem oi 
+        join canteen_product p ON oi.product_id = p.id where oi.order_id = o.id) as cost
+        from canteen_order o
+        order by cost desc;
+        """
+        cursor5.execute(query)
+        order_data = cursor5.fetchall()
+    
+    context = {'customer_data': order_data,}
+
+    return render(request, 'canteen/trial.html', context)
 
 

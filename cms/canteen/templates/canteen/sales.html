@@ -1,37 +1,44 @@
 {% extends 'canteen/main.html' %}
 {% block content %}
-<div class="container">
-    <h2>Sales for {{ order_date }}</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Total Quantity Sold</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sale in sales_data %}
+<div class="container mt-4">
+    <h1>Canteen Statistics for {{ order_date }}</h1>
+
+    <div class="mt-4">
+        <h2>Sales for {{ order_date }}</h2>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ sale.0 }}</td>
-                    <td>{{ sale.1 }}</td>
-                    <td>Rs {{ sale.2 }}</td>
-                    <td>{{ sale.3 }}</td>
-                    <td>{{ sale.5 }}</td>
+                    <th>Product ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Total Quantity Sold</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for sale in sales_data %}
+                    <tr>
+                        <td>{{ sale.0 }}</td>
+                        <td>{{ sale.1 }}</td>
+                        <td>Rs {{ sale.2 }}</td>
+                        <td>{{ sale.3 }}</td>
+                        <td>{{ sale.5 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <hr class="my-4"> <!-- Separator line -->
+
+    <div class="mt-4">
+        <h2>Product Quantity Sales</h2>
+        <p>Order Date: {{ order_date }}</p>
+        <p>Total Quantity Ordered per Product: {{ qty_data.0 }}</p>
+    </div>
 </div>
 
-<div class="container">
-    <h2>Total Quantity Ordered for {{ order_date }}</h2>
-    {% if total_quantity %}
-        <p>Total Quantity Ordered: {{ total_quantity }}</p>
-    {% else %}
-        <p>No data available for the selected date.</p>
-    {% endif %}
-</div>
+<hr class="my-4">
+
+
 {% endblock %}
