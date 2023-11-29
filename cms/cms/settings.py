@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sample',
         'USER': 'root',
-        'PASSWORD': 'Prsam!406',
+        'PASSWORD': 'XXXXXX',
         'HOST':'localhost',
         'PORT':'3306'
     }
@@ -146,4 +146,3 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pranathipraveen03@gmail.com'
-EMAIL_HOST_PASSWORD = 'Prsam1406' """
